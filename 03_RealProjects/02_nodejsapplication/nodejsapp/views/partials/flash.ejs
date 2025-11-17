@@ -1,0 +1,9 @@
+<% if (messages && Object.keys(messages).length) { %>
+  <div class="flash-wrap">
+    <% Object.keys(messages).forEach(type => { %>
+      <% messages[type].forEach(msg => { %>
+        <div class="flash <%= type %>"><%= msg %></div>
+      <% }) %>
+    <% }) %>
+  </div>
+<% } %>

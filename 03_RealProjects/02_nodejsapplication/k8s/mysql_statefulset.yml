@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: StatefulSet
+
+metadata:
+  name: mysqlstatefulset
+  namespace: nodeappnamespace
+
+spec:
+  serviceName: "mysqlheadless"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mysql
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      containers:
+        - name: mysql
+          image: mysql:8.0
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: nodeappsecret
+                  key: DB_PASSWORD
+            - name: MYSQL_USER
+              valueFrom:
+                secretKeyRef:
+                  name: nodeappsecret
+                  key: DB_USER
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: nodeappsecret
+                  key: DB_PASSWORD
+            - name: MYSQL_DATABASE
+              valueFrom:
+                secretKeyRef:
+                  name: nodeappsecret
+                  key: DB_NAME
+          ports:
+            - containerPort: 3306 
+              name: mysql
+          volumeMounts:
+            - name: mysqlstorage
+              mountPath: /var/lib/mysql
+  volumeClaimTemplates:
+    - metadata:
+        name: mysqlstorage
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 1Gi
+        storageClassName: manual
+
+
+            
+                        

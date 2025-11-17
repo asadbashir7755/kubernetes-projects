@@ -1,0 +1,33 @@
+From node:alpine
+
+# ................ create dir and set permissions
+RUN mkdir -p /usr/app/nodeapp
+
+RUN adduser -D -h /usr/app/nodeapp nodeappuser
+
+RUN chown -R  nodeappuser:nodeappuser /usr/app/nodeapp
+
+# ................ install app dependencies
+WORKDIR /usr/app/nodeapp
+
+ 
+COPY package*.json .
+
+RUN npm install 
+
+
+# ................. Copy app files
+
+COPY . .
+
+RUN chown -R nodeappuser:nodeappuser /usr/app/nodeapp
+
+# ................. switch to not root user
+USER nodeappuser
+
+# .................. run as non root user
+
+CMD [ "npm","start" ]
+
+
+

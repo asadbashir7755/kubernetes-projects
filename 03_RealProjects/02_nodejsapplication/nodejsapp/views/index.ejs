@@ -1,0 +1,26 @@
+<section class="card">
+  <form action="/add" method="post" class="form-inline">
+    <input type="text" name="text" placeholder="Add a new todo..." required />
+    <button type="submit">Add</button>
+  </form>
+
+  <h2>Todos</h2>
+  <% if (!todos || !todos.length) { %>
+    <p class="no-todos">No todos yet. Start by adding one!</p>
+  <% } else { %>
+    <ul class="todos">
+      <% todos.forEach(t => { %>
+        <li>
+          <span class="text"><%= t.text %></span>
+          <% if (t.created_at) { %>
+            <span class="time"><%= new Date(t.created_at).toLocaleString() %></span>
+          <% } %>
+        </li>
+      <% }) %>
+    </ul>
+  <% } %>
+
+  <form action="/flush" method="post" class="flush-form">
+    <button type="submit">Flush pending todos to DB</button>
+  </form>
+</section>
