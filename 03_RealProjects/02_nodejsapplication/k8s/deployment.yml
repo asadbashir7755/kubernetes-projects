@@ -4,3 +4,57 @@ kind: Deployment
 metadata:
   name: nodeappdeployment
   namespace: nodeappnamespace
+
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nodeapp
+  template:
+    metadata:
+      labels:
+        app: nodeapp
+    spec:
+      containers:
+        - name: nodeappcontainer
+          image: asadbashir7755/nodeapp:latest
+          ports:
+            - containerPort: 3000
+          env:
+            - name: DB_HOST
+              value: mysqlservice
+            - name: DB_PORT
+              value: "3306"
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: nodeappsecret
+                  key: DB_USER
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: nodeappsecret
+                  key: DB_PASSWORD
+            - name: DB_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: nodeappsecret
+                  key: DB_NAME
+            # - name: MYSQL_HOST
+            #   value: "%"
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 3000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 3000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+
+
+          
